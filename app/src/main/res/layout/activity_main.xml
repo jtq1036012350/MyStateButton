@@ -25,7 +25,8 @@
             android:layout_height="match_parent"
             android:indeterminateBehavior="repeat"
             android:indeterminateDrawable="@drawable/dialog_loading"
-            android:indeterminateOnly="true"/>
+            android:indeterminateOnly="true"
+            android:visibility="gone"/>
 
     </com.marsjiang.mystatebutton.MyStateButton>
 

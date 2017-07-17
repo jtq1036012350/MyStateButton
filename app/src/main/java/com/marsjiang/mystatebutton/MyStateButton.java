@@ -6,8 +6,8 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
@@ -15,7 +15,7 @@ import android.widget.Toast;
  * Created by Jiang on 2017-07-15.
  */
 
-public class MyStateButton extends RelativeLayout {
+public class MyStateButton extends FrameLayout {
     private Context context;
     private Button button;
     private ProgressBar progressBar;
@@ -111,6 +111,9 @@ public class MyStateButton extends RelativeLayout {
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if ("已关注".equals(button.getText().toString().trim())) {
+                    return;
+                }
                 if (buttonClickListener != null) {
                     buttonClickListener.innerClick();
                     progressBar.setVisibility(View.VISIBLE);

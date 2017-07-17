@@ -22,25 +22,23 @@ public class MyStateButton extends RelativeLayout {
     }
 
     //点击监听
-    public void setOnInnerClickeListener(ButtonClickListener buttonClickListener){
+    public void setOnInnerClickeListener(ButtonClickListener buttonClickListener) {
         this.buttonClickListener = buttonClickListener;
     }
 
     //完成方法
-    public void setOnInnerFinish(String text){
-        progressBar.setVisibility(View.GONE);
-        button.clearAnimation();
+    public void setOnInnerFinish(String text) {
         progressBar.clearAnimation();
+        progressBar.setVisibility(View.GONE);
         button.setTextColor(getResources().getColor(R.color.colorBlack));
         button.setText(text);
         button.setBackgroundResource(R.drawable.clickshape);
     }
 
     //失败完成方法
-    public void setOnInnerUnFinish(String text){
-        progressBar.setVisibility(View.GONE);
-        button.clearAnimation();
+    public void setOnInnerUnFinish(String text) {
         progressBar.clearAnimation();
+        progressBar.setVisibility(View.GONE);
         button.setTextColor(getResources().getColor(R.color.colorWhite));
         button.setText(text);
         button.setBackgroundResource(R.drawable.unclickshape);
@@ -65,21 +63,29 @@ public class MyStateButton extends RelativeLayout {
      * 初始化布局
      */
     private void initView() {
-        for(int i =0 ;i < getChildCount();i++){
-            if(getChildAt(i) instanceof Button){
+        int totalWidth = getMeasuredWidth();
+        int totalHeight = getMeasuredHeight();
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+
+            if (child instanceof Button) {
                 button = (Button) getChildAt(i);
+                //摆放子View，参数分别是子View矩形区域的左、上、右、下边
+                child.layout(0, 0, totalWidth, totalHeight);
             }
 
-            if(getChildAt(i) instanceof ProgressBar){
+            if (getChildAt(i) instanceof ProgressBar) {
                 progressBar = (ProgressBar) getChildAt(i);
+                //摆放子View，参数分别是子View矩形区域的左、上、右、下边
+                child.layout(0, 0, totalWidth, totalHeight);
             }
-        }
 
+        }
 
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(buttonClickListener !=null){
+                if (buttonClickListener != null) {
                     buttonClickListener.innerClick();
                     progressBar.setVisibility(View.VISIBLE);
                     button.setText("");
@@ -92,13 +98,19 @@ public class MyStateButton extends RelativeLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        measureChildren(widthMeasureSpec,heightMeasureSpec);
-        setMeasuredDimension(widthMeasureSpec,heightMeasureSpec);
+        measureChildren(widthMeasureSpec, heightMeasureSpec);
+        for (int i = 0; i < getChildCount(); i++) {
+            View childView = getChildAt(i);
+            int a = childView.getMeasuredWidth();
+            int b = childView.getMeasuredHeight();
+        }
+
+        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
+//        super.onLayout(changed, l, t, r, b);
         initView();
     }
 }

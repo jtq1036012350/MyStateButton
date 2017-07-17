@@ -1,13 +1,17 @@
 package com.marsjiang.mystatebutton;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 /**
+ * 自定义多种状态的按钮
  * Created by Jiang on 2017-07-15.
  */
 
@@ -16,6 +20,30 @@ public class MyStateButton extends RelativeLayout {
     private Button button;
     private ProgressBar progressBar;
     private ButtonClickListener buttonClickListener;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    progressBar.clearAnimation();
+                    progressBar.setVisibility(View.GONE);
+                    button.setTextColor(getResources().getColor(R.color.colorWhite));
+                    button.setText(msg.obj.toString());
+                    button.setBackgroundResource(R.drawable.unclickshape);
+                    Toast.makeText(context, "关注失败！", Toast.LENGTH_SHORT).show();
+                    break;
+                case 1:
+                    progressBar.setVisibility(View.GONE);
+                    button.setTextColor(getResources().getColor(R.color.colorBlack));
+                    button.setText(msg.obj.toString());
+                    button.setBackgroundResource(R.drawable.clickshape);
+                    Toast.makeText(context, "关注成功！", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
     public interface ButtonClickListener {
         void innerClick();
@@ -28,20 +56,18 @@ public class MyStateButton extends RelativeLayout {
 
     //完成方法
     public void setOnInnerFinish(String text) {
-        progressBar.clearAnimation();
-        progressBar.setVisibility(View.GONE);
-        button.setTextColor(getResources().getColor(R.color.colorBlack));
-        button.setText(text);
-        button.setBackgroundResource(R.drawable.clickshape);
+        Message message = Message.obtain();
+        message.obj = text;
+        message.what = 1;
+        handler.sendMessage(message);
     }
 
     //失败完成方法
-    public void setOnInnerUnFinish(String text) {
-        progressBar.clearAnimation();
-        progressBar.setVisibility(View.GONE);
-        button.setTextColor(getResources().getColor(R.color.colorWhite));
-        button.setText(text);
-        button.setBackgroundResource(R.drawable.unclickshape);
+    public void setOnInnerUnFinish(final String text) {
+        Message message = Message.obtain();
+        message.obj = text;
+        message.what = 0;
+        handler.sendMessage(message);
     }
 
     public MyStateButton(Context context) {

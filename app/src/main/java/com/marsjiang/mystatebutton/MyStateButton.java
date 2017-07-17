@@ -6,8 +6,8 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
@@ -15,7 +15,7 @@ import android.widget.Toast;
  * Created by Jiang on 2017-07-15.
  */
 
-public class MyStateButton extends FrameLayout {
+public class MyStateButton extends RelativeLayout {
     private Context context;
     private Button button;
     private ProgressBar progressBar;
@@ -40,6 +40,11 @@ public class MyStateButton extends FrameLayout {
                     button.setText(msg.obj.toString());
                     button.setBackgroundResource(R.drawable.clickshape);
                     Toast.makeText(context, "关注成功！", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    //设定按钮颜色以及进度条可见性
+                    progressBar.setVisibility(View.VISIBLE);
+                    button.setText(msg.obj.toString());
                     break;
             }
         }
@@ -89,23 +94,22 @@ public class MyStateButton extends FrameLayout {
      * 初始化布局
      */
     private void initView() {
+        //获取外布局的宽高
         int totalWidth = getMeasuredWidth();
         int totalHeight = getMeasuredHeight();
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-
-            if (child instanceof Button) {
-                button = (Button) getChildAt(i);
+            if (child instanceof RelativeLayout) {
+                button = (Button) ((RelativeLayout) child).getChildAt(0);
+//                button = (Button) getChildAt(i);
                 //摆放子View，参数分别是子View矩形区域的左、上、右、下边
                 child.layout(0, 0, totalWidth, totalHeight);
             }
-
             if (getChildAt(i) instanceof ProgressBar) {
                 progressBar = (ProgressBar) getChildAt(i);
                 //摆放子View，参数分别是子View矩形区域的左、上、右、下边
                 child.layout(0, 0, totalWidth, totalHeight);
             }
-
         }
 
         button.setOnClickListener(new OnClickListener() {
@@ -114,14 +118,17 @@ public class MyStateButton extends FrameLayout {
                 if ("已关注".equals(button.getText().toString().trim())) {
                     return;
                 }
+
+                Message message = Message.obtain();
+                message.obj = "";
+                message.what = 2;
+                handler.sendMessage(message);
+
                 if (buttonClickListener != null) {
                     buttonClickListener.innerClick();
-                    progressBar.setVisibility(View.VISIBLE);
-                    button.setText("");
                 }
             }
         });
-
     }
 
     @Override
